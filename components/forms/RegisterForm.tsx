@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import CustomFormField from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { useState } from "react";
-import { UserFormValidation } from "@/lib/validation";
+import { PatientFormValidation, UserFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import { FormFieldType } from "./PatientForm";
@@ -18,6 +18,7 @@ import {
   Doctors,
   GenderOptions,
   IdentificationTypes,
+  PatientFormDefaultValues,
 } from "@/constants";
 import { Label } from "@/components/ui/label";
 import { SelectItem } from "../ui/select";
@@ -29,9 +30,10 @@ const RegisterForm = ({ user }: { user: User }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
     defaultValues: {
+      ...PatientFormDefaultValues,
       name: "",
       email: "",
       phone: "",
@@ -43,7 +45,7 @@ const RegisterForm = ({ user }: { user: User }) => {
     name,
     email,
     phone,
-  }: z.infer<typeof UserFormValidation>) {
+  }: z.infer<typeof PatientFormValidation>) {
     setIsLoading(true);
 
     try {
@@ -69,7 +71,6 @@ const RegisterForm = ({ user }: { user: User }) => {
           <div className="mb-9 space-y-1">
             <h2 className="sub-header">Personal Information</h2>
           </div>
-        </section>
 
           <CustomFormField
             fieldType={FormFieldType.INPUT}
