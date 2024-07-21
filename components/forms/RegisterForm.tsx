@@ -14,10 +14,15 @@ import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/actions/patient.actions";
 import { FormFieldType } from "./PatientForm";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Doctors, GenderOptions } from "@/constants";
+import {
+  Doctors,
+  GenderOptions,
+  IdentificationTypes,
+} from "@/constants";
 import { Label } from "@/components/ui/label";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
+import FileUploader from "../FileUploader";
 
 const RegisterForm = ({ user }: { user: User }) => {
   const router = useRouter();
@@ -66,215 +71,289 @@ const RegisterForm = ({ user }: { user: User }) => {
           </div>
         </section>
 
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="name"
-          label="Full Name"
-          placeholder="ex: John Smith"
-          iconSrc="/assets/icons/user.svg"
-          iconAlt="user"
-        />
-        <div className="flex flex-col gap-6 xl:flex-row">
           <CustomFormField
             fieldType={FormFieldType.INPUT}
             control={form.control}
-            name="email"
-            label="Email Address"
-            placeholder="johnsmith@yoyo.com"
-            iconSrc="/assets/icons/email.svg"
-            iconAlt="email"
+            name="name"
+            label="Full Name"
+            placeholder="ex: John Smith"
+            iconSrc="/assets/icons/user.svg"
+            iconAlt="user"
           />
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="email"
+              label="Email Address"
+              placeholder="johnsmith@yoyo.com"
+              iconSrc="/assets/icons/email.svg"
+              iconAlt="email"
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.PHONE_INPUT}
+              control={form.control}
+              name="phone"
+              label="Phone number"
+              placeholder="(555) 123-4567"
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.DATE_PICKER}
+              control={form.control}
+              name="birthDate"
+              label="Date of Birth"
+              // placeholder="Select your birth date"
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.SKELETON}
+              control={form.control}
+              name="gender"
+              label="Gender"
+              renderSkeleton={(field) => (
+                <FormControl>
+                  <RadioGroup
+                    className="flex h-11 gap-6 xl:justify-between"
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    {GenderOptions.map((option) => (
+                      <div key={option} className="radio-group">
+                        <RadioGroupItem value={option} id={option} />
+                        <Label htmlFor={option} className="cursor-pointer">
+                          {option}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              )}
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="address"
+              label="Your Address"
+              placeholder="ex: 12 South St., New York, NY"
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="occupation"
+              label="Occupation"
+              placeholder="Software Engineer"
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="emergencyContactName"
+              label="Emergency Contact Name"
+              placeholder="Contact Name"
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.PHONE_INPUT}
+              control={form.control}
+              name="emergencyContactNumber"
+              label="Emergency Contact Number"
+              placeholder="(453) 455-4567"
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+        </section>
+        <section className="space-y-6">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">Medical Information</h2>
+          </div>
 
           <CustomFormField
-            fieldType={FormFieldType.PHONE_INPUT}
+            fieldType={FormFieldType.SELECT}
             control={form.control}
-            name="phone"
-            label="Phone number"
-            placeholder="(555) 123-4567"
+            name="primaryPhysician"
+            label="Primary Care Physician"
+            placeholder="Select a Physician"
+            iconSrc=""
+            iconAlt=""
+          >
+            {Doctors.map((doctor) => (
+              <SelectItem key={doctor.name} value={doctor.name}>
+                <div className="flex cursor-pointer items-center gap-2">
+                  <Image
+                    src={doctor.image}
+                    height={32}
+                    width={32}
+                    alt={doctor.name}
+                    className="rounded-full border border-dark-500"
+                  />
+                  <p className="">{doctor.name}</p>
+                </div>
+              </SelectItem>
+            ))}
+          </CustomFormField>
+
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="insuranceProvider"
+              label="Insurance Provider"
+              placeholder="Blue Cross Blue Shield"
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="insurancePolicyNumber"
+              label="Insurance Policy Number"
+              placeholder="DF27763FGG76"
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="allergies"
+              label="Allergies (if any)"
+              placeholder="ex: Peanuts, Penicillin, Dairy"
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="currentMedication"
+              label="Current Medication (if any)"
+              placeholder="Ibuprofen 800mg, Paracetnatomol 500mg"
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+          <div className="flex flex-col gap-6 xl:flex-row">
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="familyMedicalHistory"
+              label="Family Medical History (if relevant)"
+              placeholder="Mother had diabetes, Father had heart disease."
+              iconSrc=""
+              iconAlt=""
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="pastMedicalHistory"
+              label="Past Medical History"
+              placeholder="Had a surgery in 2019, Diagnosed with Asthma in 2018."
+              iconSrc=""
+              iconAlt=""
+            />
+          </div>
+        </section>
+        <section className="space-y-6">
+          <div className="mb-9 space-y-1">
+            <h2 className="sub-header">Identification and Verification</h2>
+          </div>
+
+          <CustomFormField
+            fieldType={FormFieldType.SELECT}
+            control={form.control}
+            name="identificationType"
+            label="Identification Type"
+            placeholder="Select an ID Type"
+            iconSrc=""
+            iconAlt=""
+          >
+            {IdentificationTypes.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </CustomFormField>
+
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="identificationNumber"
+            label="Identification Number"
+            placeholder="1234567890"
             iconSrc=""
             iconAlt=""
           />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.DATE_PICKER}
-            control={form.control}
-            name="birthDate"
-            label="Date of Birth"
-            // placeholder="Select your birth date"
-            iconSrc=""
-            iconAlt=""
-          />
-
           <CustomFormField
             fieldType={FormFieldType.SKELETON}
             control={form.control}
-            name="gender"
-            label="Gender"
+            name="identificationDocument"
+            label="Scanned Copy of Identification Document"
             renderSkeleton={(field) => (
               <FormControl>
-                <RadioGroup
-                  className="flex h-11 gap-6 xl:justify-between"
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  {GenderOptions.map((option) => (
-                    <div key={option} className="radio-group">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option} className="cursor-pointer">
-                        {option}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                <FileUploader files={field.value} onChange={field.onChange} />
               </FormControl>
             )}
             iconSrc=""
             iconAlt=""
           />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="address"
-            label="Your Address"
-            placeholder="ex: 12 South St., New York, NY"
-            iconSrc=""
-            iconAlt=""
-          />
-
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="occupation"
-            label="Occupation"
-            placeholder="Software Engineer"
-            iconSrc=""
-            iconAlt=""
-          />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="emergencyContactName"
-            label="Emergency Contact Name"
-            placeholder="Contact Name"
-            iconSrc=""
-            iconAlt=""
-          />
-
-          <CustomFormField
-            fieldType={FormFieldType.PHONE_INPUT}
-            control={form.control}
-            name="emergencyContactNumber"
-            label="Emergency Contact Number"
-            placeholder="(453) 455-4567"
-            iconSrc=""
-            iconAlt=""
-          />
-        </div>
+        </section>
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Medical Information</h2>
+            <h2 className="sub-header">Consent and Privacy</h2>
           </div>
+
+          <CustomFormField
+            fieldType={FormFieldType.CHECKBOX}
+            control={form.control}
+            name="treatmentConsent"
+            label="I consent to receive treatment for my health condition."
+            iconSrc=""
+            iconAlt=""
+          />
+
+          <CustomFormField
+            fieldType={FormFieldType.CHECKBOX}
+            control={form.control}
+            name="disclosureConsent"
+            label="I consent to the use and disclosure of my health
+            information for treatment purposes."
+            iconSrc=""
+            iconAlt=""
+          />
+
+          <CustomFormField
+            fieldType={FormFieldType.CHECKBOX}
+            control={form.control}
+            name="privacyConsent"
+            label="I acknowledge that I have reviewed and agree to the
+            privacy policy"
+            iconSrc=""
+            iconAlt=""
+          />
         </section>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="primaryPhysician"
-          label="Primary Care Physician"
-          placeholder="Select a Physician"
-          iconSrc=""
-          iconAlt=""
-        >
-          {Doctors.map((doctor) => (
-            <SelectItem key={doctor.name} value={doctor.name}>
-              <div className="flex cursor-pointer items-center gap-2">
-                <Image
-                  src={doctor.image}
-                  height={32}
-                  width={32}
-                  alt={doctor.name}
-                  className="rounded-full border border-dark-500"
-                />
-                <p className="">{doctor.name}</p>
-              </div>
-            </SelectItem>
-          ))}
-        </CustomFormField>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="insuranceProvider"
-            label="Insurance Provider"
-            placeholder="Blue Cross Blue Shield"
-            iconSrc=""
-            iconAlt=""
-          />
-
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="insurancePolicyNumber"
-            label="Insurance Policy Number"
-            placeholder="DF27763FGG76"
-            iconSrc=""
-            iconAlt=""
-          />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.TEXTAREA}
-            control={form.control}
-            name="allergies"
-            label="Allergies (if any)"
-            placeholder="ex: Peanuts, Penicillin, Dairy"
-            iconSrc=""
-            iconAlt=""
-          />
-
-          <CustomFormField
-            fieldType={FormFieldType.TEXTAREA}
-            control={form.control}
-            name="currentMedication"
-            label="Current Medication (if any)"
-            placeholder="Ibuprofen 800mg, Paracetnatomol 500mg"
-            iconSrc=""
-            iconAlt=""
-          />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row">
-          <CustomFormField
-            fieldType={FormFieldType.TEXTAREA}
-            control={form.control}
-            name="familyMedicalHistory"
-            label="Family Medical History (if relevant)"
-            placeholder="Mother had diabetes, Father had heart disease."
-            iconSrc=""
-            iconAlt=""
-          />
-
-          <CustomFormField
-            fieldType={FormFieldType.TEXTAREA}
-            control={form.control}
-            name="pastMedicalHistory"
-            label="Past Medical History"
-            placeholder="Had a surgery in 2019, Diagnosed with Asthma in 2018."
-            iconSrc=""
-            iconAlt=""
-          />
-        </div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
 
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
