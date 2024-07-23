@@ -18,8 +18,12 @@ export default async function NewAppointment({
             alt="patient"
             className="mb-12 h-10 w-fit"
           />
-          <AppointmentForm type="create" userId={userId} />
-          <p className="copyright py-12">©2024 shawnKebel</p>
+          <AppointmentForm
+            type="create"
+            userId={userId}
+            patientId={patient.$id}
+          />
+          <p className="copyright py-12 mt-10">©2024 shawnKebel</p>
         </div>
       </section>
       <Image
