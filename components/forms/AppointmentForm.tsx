@@ -154,7 +154,7 @@ const AppointmentForm = ({
                 control={form.control}
                 name="note"
                 label="Notes"
-                placeholder="ex: Prefer afternoon appointment, if available."
+                placeholder="ex: Prefer afternoon appointment."
                 iconSrc=""
                 iconAlt=""
               />
